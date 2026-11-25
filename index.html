@@ -648,7 +648,7 @@ body{background:linear-gradient(180deg,var(--bg),var(--tint) 1800px,var(--blush)
    SUPABASE  >>>  COLE AQUI as duas chaves do seu projeto
    (Supabase > Project Settings > API)
    ===================================================================== */
-const SUPABASE_URL="https://hbxgmfoqjimwklcvyawj.supabase.co";   // <<< COLE AQUI / CONFIRA: precisa ser a Project URL do seu projeto, no formato https://CODIGO-DO-PROJETO.supabase.co
+const SUPABASE_URL="https://supabase.co";   // <<< COLE AQUI / CONFIRA: precisa ser a Project URL do seu projeto, no formato https://CODIGO-DO-PROJETO.supabase.co
 const SUPABASE_KEY="sb_publishable_ZqiE4Q804Pc-9HQKMgvC_g_4om5b7GE";   // <<< chave publishable (pode ficar no site). NUNCA use a service_role
 const EMAILJS_SERVICE_ID="service_xvfvpp8";    // <<< EmailJS
 const EMAILJS_TEMPLATE_ID="template_925i259";  // <<< EmailJS (variáveis do template: to_email, representante, mensagem)
@@ -708,7 +708,7 @@ var PT=[["0","VENDOR"],["60","60 dias"],["75","75 dias"],["90","90 dias"]],PRAZO
 function ptName(t){for(var i=0;i<PT.length;i++)if(PT[i][0]===t)return PT[i][1];return PT[0][1]}
 function prc(g,z){z=z||PRAZO;var v=z!=="0"?g["pr"+z]:0;return v||g.pr0||g.pr}
 function przHtml(){return'<div class="pz"><span>Tabela de preço médio</span>'+PT.map(function(x){return'<button data-pz="'+x[0]+'"'+(x[0]===PRAZO?' class="on"':'')+'>'+x[1]+'</button>'}).join("")+'</div>'}
-function drawPz(){$("pzb").innerHTML=P.length?przHtml():"";$("pzb").hidden=!P.length}
+function drawPz(){$("pzb").innerHTML=przHtml();$("pzb").hidden=false}
 function setPrazo(t){if(t===PRAZO)return;PRAZO=t;var had=order.length;order.forEach(function(o){o.z=t});LS.set("pp_prazo",t);drawPz();build();drawHero();if($("sh").open)sheet(true);if($("od").open)ol();upd();if(had)toast("Tabela alterada: preços do carrinho atualizados")}
 var FPOPEN={};
 function sumA(a){return a.reduce(function(s,v){return s+v},0)}
@@ -767,13 +767,24 @@ function clearOrder(){order=[];upd();badges()}
 /* ---------- Supabase: chamadas às funções (RPC) e ao Storage ---------- */
 function sbHeaders(x){var h={apikey:SUPABASE_KEY};if(/^eyJ/.test(SUPABASE_KEY))h.Authorization="Bearer "+SUPABASE_KEY;for(var k in (x||{}))h[k]=x[k];return h}
 function rpc(fn,args){return fetch(SUPABASE_URL+"/rest/v1/rpc/"+fn,{method:"POST",headers:sbHeaders({"Content-Type":"application/json"}),body:JSON.stringify(args||{})}).then(function(r){return r.text().then(function(t){var j=null;try{j=t?JSON.parse(t):null}catch(e){}if(!r.ok)throw new Error((j&&(j.message||j.hint||j.error))||("http "+r.status));return j})})}
+/* publica o estoque em lotes pequenos e troca tudo no passo final (se falhar no meio, o estoque atual fica como estava) */
+function comTentativas(fn,n){return fn().catch(function(e){if(n<=1)throw e;return new Promise(function(r){setTimeout(r,900)}).then(function(){return comTentativas(fn,n-1)})})}
+function publicarEmLotes(o){var list=o.p||[],sess="",u,i,k=0,lotes=[],cur=[],bytes=0,ini=0;
+try{u=new Uint8Array(12);crypto.getRandomValues(u);sess=Array.prototype.map.call(u,function(b){return("0"+b.toString(16)).slice(-2)}).join("")}catch(e){sess="";for(i=0;i<24;i++)sess+=Math.floor(Math.random()*16).toString(16)}
+for(i=0;i<list.length;i++){var j=JSON.stringify(list[i]).length;if(cur.length&&(cur.length>=100||bytes+j>800000)){lotes.push({ini:ini,p:cur});cur=[];bytes=0;ini=i}cur.push(list[i]);bytes+=j}
+if(cur.length)lotes.push({ini:ini,p:cur});
+if(!lotes.length)return Promise.resolve({ok:false,erro:"vazio"});
+function prox(){if(k>=lotes.length)return rpc("publicar_global_fim",{p_pin:o.code,p_sess:sess,p_hash:o.hash||""});
+var lt=lotes[k];prog(88,"Enviando ao servidor ("+(k+1)+" de "+lotes.length+")...");
+return comTentativas(function(){return rpc("publicar_global_lote",{p_pin:o.code,p_sess:sess,p_inicio:lt.ini,p_produtos:lt.p})},3).then(function(r){if(!r||!r.ok)return r;k++;return prox()})}
+return prox()}
 function catRemoto(){return rpc("catalogo_publico",{})}
 /* aviso curto por e-mail (EmailJS): sem itens nem detalhes do pedido */
 function emailAviso(para,rep){if(!para)return;var link="";try{if(location.protocol!=="file:")link=location.origin+location.pathname+"?rep="+encodeURIComponent(SLUG)}catch(e){}
 var mensagem="Você recebeu um novo pedido. Entre no site"+(link?" ("+link+")":"")+", toque no sininho e abra o pedido para ver o resumo e baixar o PDF.";
 try{fetch("https://api.emailjs.com/api/v1.0/email/send",{method:"POST",keepalive:true,headers:{"Content-Type":"application/json"},body:JSON.stringify({service_id:EMAILJS_SERVICE_ID,template_id:EMAILJS_TEMPLATE_ID,user_id:EMAILJS_PUBLIC_KEY,template_params:{to_email:para,representante:rep||"",mensagem:mensagem}})}).catch(function(){})}catch(e){}}
 function api(o){var a=o&&o.a;
-if(a==="publish")return rpc("publicar_catalogo_global",{p_pin:o.code,p_hash:o.hash||"",p_produtos:o.p});
+if(a==="publish")return publicarEmLotes(o);
 if(a==="entrar")return rpc("entrar_aparelho",{p_slug:SLUG,p_pin:o.code});
 if(a==="novos")return rpc("pedidos_novos",{p_slug:SLUG,p_tok:o.tok});
 if(a==="pdf")return rpc("pedido_pdf",{p_slug:SLUG,p_tok:o.tok,p_id:o.id});
@@ -955,7 +966,7 @@ function skey(p){return pkey(p).replace(/[^A-Z0-9.\-_\/]/g,"")}
 function recOf(p){return{key:skey(p),l:p.l,o:p.o,k:p.k,ih:p.ih,img:"",g:p.g.filter(gok).map(function(g){return{sz:g.sz,q:g.q,pr:g.pr,pr0:g.pr0,pr60:g.pr60,pr75:g.pr75,pr90:g.pr90,par:g.par,cx:g.cx,d:g.d}})}}
 function publish(items,hash,mode){var inN={};items.forEach(function(i){inN[i.key]=1});var recs=items.map(function(i){var old=PM[i.key];return{key:i.key,l:i.l,o:i.o,k:i.k,ih:i.ih,img:(old&&old.ih&&old.ih===i.ih)?"":i.img,g:i.g.filter(function(x){return x.cx!==0})}}).filter(function(r){return r.g.length});
 var keep=P.filter(function(p){return vis(p)&&!inN[skey(p)]&&(mode==="bota"?p.k!=="O":(RECURSOS.uploadBotas&&p.k==="O"))}).map(recOf).filter(function(r){return r.g.length});return subirImagens(recs.concat(keep)).then(function(all){return api({a:"publish",code:RCODE,hash:hash,p:all})})}
-$("acf").onclick=function(){if(!pend)return;var it=pend.items,hh=pend.hash,md=pend.mode;pend=null;$("acf").hidden=true;$("acc").hidden=true;$("asm").innerHTML="";prog(88,"Enviando o estoque novo para o servidor...");publish(it,hh,md).then(function(r){if(!r.ok)throw new Error(r.erro||"x");return loadCatalog().then(function(){prog(100,"Concluído");setTimeout(function(){prog(null)},900);MSG('<b>Estoque publicado.</b> Agora o catálogo tem '+plural(r.n,"modelo ativo","modelos ativos")+' ('+plural(r.novos,"novo","novos")+', '+plural(r.removidos,"antigo removido","antigos removidos")+'). Os clientes já veem o catálogo novo no mesmo link.');$("adst").textContent=metaTxt();SLOT={};LASTB=false;drawSlots()})}).catch(function(e){prog(null);var m=e&&e.message;bad(m==="vazio"?"O servidor não encontrou nenhum produto válido.":m==="bloqueado"||m==="errado"?"O servidor recusou o PIN. Aguarde alguns minutos e tente de novo.":"Não foi possível enviar para o servidor. Verifique a internet e tente de novo.")})};
+$("acf").onclick=function(){if(!pend)return;var it=pend.items,hh=pend.hash,md=pend.mode;pend=null;$("acf").hidden=true;$("acc").hidden=true;$("asm").innerHTML="";prog(88,"Enviando o estoque novo para o servidor...");publish(it,hh,md).then(function(r){if(!r.ok)throw new Error(r.erro||"x");return loadCatalog().then(function(){prog(100,"Concluído");setTimeout(function(){prog(null)},900);MSG('<b>Estoque publicado.</b> Agora o catálogo tem '+plural(r.n,"modelo ativo","modelos ativos")+' ('+plural(r.novos,"novo","novos")+', '+plural(r.removidos,"antigo removido","antigos removidos")+'). Os clientes já veem o catálogo novo no mesmo link.');$("adst").textContent=metaTxt();SLOT={};LASTB=false;drawSlots()})}).catch(function(e){prog(null);var m=e&&e.message;bad(m==="vazio"?"O servidor não encontrou nenhum produto válido.":m==="dados"?"O servidor recusou os dados enviados (formato inesperado).":m==="bloqueado"||m==="errado"?"O servidor recusou o PIN. Aguarde alguns minutos e tente de novo.":"Não foi possível enviar para o servidor"+(m&&m!=="x"?" ("+String(m).slice(0,120)+")":"")+". Verifique a internet e tente de novo.")})};
 $("acc").onclick=function(){SLOT={};LASTB=false;drawSlots();pend=null;$("asm").innerHTML="";$("acf").hidden=true;$("acc").hidden=true};
 function wire(zid,iid,mode){var z=$(zid);$(iid).addEventListener("change",function(e){loadSlot(mode,e.target.files[0]);e.target.value=""});["dragenter","dragover"].forEach(function(t){z.addEventListener(t,function(e){e.preventDefault();z.classList.add("over")})});["dragleave","drop"].forEach(function(t){z.addEventListener(t,function(e){e.preventDefault();z.classList.remove("over")})});z.addEventListener("drop",function(e){loadSlot(mode,e.dataTransfer.files[0])})}
 drawSlots();if(RECURSOS.uploadBotas){$("bbox").hidden=false;wire("dzb","afb","bota")}
@@ -982,6 +993,7 @@ function msg(t){$("cnt").textContent="";$("g").innerHTML='<div class="empty">'+t
 if(/^COLE_AQUI/.test(SUPABASE_URL)||/^COLE_AQUI/.test(SUPABASE_KEY)){msg("Falta configurar SUPABASE_URL e SUPABASE_KEY no arquivo do site.");return}
 if(!/^https:\/\/[^\/]+\.supabase\.co\/?$/i.test(SUPABASE_URL)||/^https:\/\/(www\.)?supabase\.co/i.test(SUPABASE_URL)){msg("SUPABASE_URL incompleta no arquivo do site: use o endereço do projeto, no formato https://CODIGO-DO-PROJETO.supabase.co");return}
 if(!SLUG){msg("Link inválido: falta o representante no endereço (use ?rep=nome-do-representante).");return}
+try{var pz0=LS.get("pp_prazo","0");if(["0","60","75","90"].indexOf(pz0)>=0)PRAZO=pz0}catch(e){}drawPz();
 var feito=false,c=LS.get("pp_rep",null);if(c&&c.id){REP=c;setRep();feito=true;boot()}
 rpc("rep_publico",{p_slug:SLUG}).then(function(r){
 if(!r||!r.id){if(!feito)msg("Representante não encontrado. Confira o link.");return}
