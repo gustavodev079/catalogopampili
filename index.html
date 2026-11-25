@@ -650,9 +650,7 @@ body{background:linear-gradient(180deg,var(--bg),var(--tint) 1800px,var(--blush)
    ===================================================================== */
 const SUPABASE_URL="https://hbxgmfoqjimwklcvyawj.supabase.co";   // <<< COLE AQUI / CONFIRA: precisa ser a Project URL do seu projeto, no formato https://CODIGO-DO-PROJETO.supabase.co
 const SUPABASE_KEY="sb_publishable_ZqiE4Q804Pc-9HQKMgvC_g_4om5b7GE";   // <<< chave publishable (pode ficar no site). NUNCA use a service_role
-const EMAILJS_SERVICE_ID="service_xvfvpp8";    // <<< EmailJS
-const EMAILJS_TEMPLATE_ID="template_925i259";  // <<< EmailJS (variáveis do template: to_email, representante, mensagem)
-const EMAILJS_PUBLIC_KEY="TOobUplJecAVSbvzdZsZV"; // <<< EmailJS (chave pública)
+const GAS_URL="COLE_AQUI_URL_DO_APPS_SCRIPT";  // <<< COLE AQUI: endereço /exec do Google Apps Script (manda o e-mail com o PDF anexado)
 const BUCKET="catalogo";                        // bucket público criado pelo SQL (imagens dos produtos)
 /* Nada do representante fica fixo aqui: nome, WhatsApp e foto vêm do Supabase pelo link ?rep=slug */
 var REP={id:"",slug:"",nome:"",whatsapp:"",foto:""};
@@ -779,17 +777,18 @@ var lt=lotes[k];prog(88,"Enviando ao servidor ("+(k+1)+" de "+lotes.length+")...
 return comTentativas(function(){return rpc("publicar_global_lote",{p_pin:o.code,p_sess:sess,p_inicio:lt.ini,p_produtos:lt.p})},3).then(function(r){if(!r||!r.ok)return r;k++;return prox()})}
 return prox()}
 function catRemoto(){return rpc("catalogo_publico",{})}
-/* aviso curto por e-mail (EmailJS): sem itens nem detalhes do pedido */
-function emailAviso(para,rep){if(!para)return;var link="";try{if(location.protocol!=="file:")link=location.origin+location.pathname+"?rep="+encodeURIComponent(SLUG)}catch(e){}
-var mensagem="Você recebeu um novo pedido. Entre no site"+(link?" ("+link+")":"")+", toque no sininho e abra o pedido para ver o resumo e baixar o PDF.";
-try{fetch("https://api.emailjs.com/api/v1.0/email/send",{method:"POST",keepalive:true,headers:{"Content-Type":"application/json"},body:JSON.stringify({service_id:EMAILJS_SERVICE_ID,template_id:EMAILJS_TEMPLATE_ID,user_id:EMAILJS_PUBLIC_KEY,template_params:{to_email:para,representante:rep||"",mensagem:mensagem}})}).catch(function(){})}catch(e){}}
+/* e-mail ao representante com o PDF anexado (Google Apps Script); o resumo do pedido não vai no texto */
+function emailAviso(para,rep,pdf,pdfNome){if(!para||/^COLE_AQUI/.test(GAS_URL))return;var link="";try{if(location.protocol!=="file:")link=location.origin+location.pathname+"?rep="+encodeURIComponent(SLUG)}catch(e){}
+var mensagem="Você recebeu um novo pedido. O PDF do pedido segue em anexo"+(link?" e também fica no site ("+link+"): toque no sininho e abra o pedido.":".");
+var b64=String(pdf||"").replace(/^data:application\/pdf;base64,/,"");
+try{fetch(GAS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({email_destino:para,representante:rep||"",mensagem:mensagem,pdf_nome:pdfNome||"Pedido-Pampili.pdf",pdf_base64:b64})}).catch(function(){})}catch(e){}}
 function api(o){var a=o&&o.a;
 if(a==="publish")return publicarEmLotes(o);
 if(a==="entrar")return rpc("entrar_aparelho",{p_slug:SLUG,p_pin:o.code});
 if(a==="novos")return rpc("pedidos_novos",{p_slug:SLUG,p_tok:o.tok});
 if(a==="pdf")return rpc("pedido_pdf",{p_slug:SLUG,p_tok:o.tok,p_id:o.id});
 if(a==="detalhe")return rpc("pedido_detalhe",{p_slug:SLUG,p_tok:o.tok,p_id:o.id});
-if(a==="pedido")return rpc("registrar_pedido",{p_slug:SLUG,p_nome:o.nome,p_tel:o.tel,p_cnpj:o.cnpj,p_total:o.total,p_condicao:o.condicao,p_resumo:o.resumo||"",p_pdf_b64:o.pdfBase64||null}).then(function(r){if(r&&r.ok&&r.email)emailAviso(r.email,r.rep||REP.nome);return r});
+if(a==="pedido")return rpc("registrar_pedido",{p_slug:SLUG,p_nome:o.nome,p_tel:o.tel,p_cnpj:o.cnpj,p_total:o.total,p_condicao:o.condicao,p_resumo:o.resumo||"",p_pdf_b64:o.pdfBase64||null}).then(function(r){if(r&&r.ok&&r.email)emailAviso(r.email,r.rep||REP.nome,o.pdfBase64,o.pdfNome);return r});
 return Promise.reject(new Error("acao"))}
 /* envia ao Storage as imagens novas (data:) e troca por link público; se falhar, a imagem segue embutida */
 function hash16(str){if(window.crypto&&crypto.subtle&&window.TextEncoder)return crypto.subtle.digest("SHA-256",new TextEncoder().encode(str)).then(function(h){return Array.prototype.map.call(new Uint8Array(h).slice(0,10),function(b){return("0"+b.toString(16)).slice(-2)}).join("")});var x=2166136261,i;for(i=0;i<str.length;i++){x^=str.charCodeAt(i);x=Math.imul(x,16777619)>>>0}return Promise.resolve(("00000000"+x.toString(16)).slice(-8)+("0000"+str.length.toString(16)).slice(-8))}
