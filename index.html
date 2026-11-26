@@ -1,4 +1,10 @@
 <!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">
+<!-- Prévia do WhatsApp: troque "github.io" em og:image e og:url pelo endereço real do seu site (https://gustavodev079.github.io/catalogopampili/) e pelo link da logo --> https://github.com/gustavodev079/catalogopampili/blob/main/banners/IMG_0456.png
+<meta property="og:type" content="website">
+<meta property="og:title" content="Pampili - Pronta Entrega">
+<meta property="og:description" content="Acesse o showroom digital, confira a grade disponível e faça seu pedido online.">
+<meta property="og:image" content="https://github.io">
+<meta property="og:url" content="https://github.io">
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#fff8fa">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
@@ -585,9 +591,16 @@ body{background:linear-gradient(180deg,var(--bg),var(--tint) 1800px,var(--blush)
 .bom .t{color:var(--ink);font-weight:700}
 .bor{margin:0;padding:14px;max-height:46dvh;overflow:auto;white-space:pre-wrap;word-break:break-word;border:1px solid var(--line);border-radius:18px;background:var(--soft);color:var(--tx);font:500 .82rem/1.45 "Hanken Grotesk",system-ui,sans-serif}
 #bob .bdp{margin-top:14px}
-.pvbox{margin:4px 0 12px}
-.pvc{display:block;width:100%;height:auto;margin:0 0 10px;border:1px solid var(--line);border-radius:12px;background:#fff;box-shadow:var(--elev1)}
-.bacts{display:grid;gap:8px;margin-top:6px}
+#bo{width:min(96vw,820px);max-width:96vw;height:calc(100dvh - 20px - env(safe-area-inset-top,0px));max-height:calc(100dvh - 20px - env(safe-area-inset-top,0px));margin:auto;border-radius:var(--r-xl);overflow:hidden;animation:none}
+#bo[open]{display:flex}
+#bo .ob{display:flex;flex-direction:column;flex:1;min-width:0;min-height:0;padding:16px 14px calc(14px + env(safe-area-inset-bottom,0px))}
+#bo .oh.st{position:static;margin:0 0 6px;padding:0}
+#bo #bob{display:flex;flex-direction:column;flex:1;min-height:0}
+.pvbox{flex:1;min-height:0;margin:6px 0 10px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;border-radius:12px;background:var(--soft)}
+.pvbox>.mu{margin:14px 12px}
+.pvc{display:block;width:100%;height:auto;margin:0 0 8px;box-sizing:border-box;border:1px solid var(--line);background:#fff}
+.bacts{flex:none;display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-top:0}
+.bacts.so1{grid-template-columns:1fr}
 .bds{display:flex;align-items:center;justify-content:center;width:100%;min-height:46px;padding:0 18px;border:1px solid var(--line2);border-radius:99px;background:var(--surf);color:var(--pkd);font:700 .9rem "Hanken Grotesk",system-ui,sans-serif;text-decoration:none;cursor:pointer}
 #bob .bacts .bdp{margin-top:0}
 </style></head><body>
@@ -1109,29 +1122,41 @@ LS.del("pp_th");drawHc();drawCats();drawBanner();iniciar();
     $("bd").showModal();
     LS.set("rseen", top); pintar();
   }
-  function zap(tel) {
-    var d = String(tel || "").replace(/\D/g, "");
-    if (d.length === 10 || d.length === 11) d = "55" + d;
-    return d.length >= 12 ? "https://wa.me/" + d : "";
-  }
-  /* prévia visual: desenha as páginas do próprio PDF do pedido (com as fotos) */
+  /* prévia visual: desenha as páginas do próprio PDF do pedido (com as fotos), sempre na largura total da janela */
+  var URLS = [];
+  function soltar() { URLS.forEach(function (u) { try { URL.revokeObjectURL(u); } catch (e) {} }); URLS = []; }
   function prever(b64, box, tk) {
     return loadPdf().then(function (L) {
       var bin = atob(b64), u = new Uint8Array(bin.length), i;
       for (i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
       return L.getDocument({ data: u, isEvalSupported: false }).promise;
     }).then(function (doc) {
-      var n = Math.min(doc.numPages, 8), w = Math.max(260, box.clientWidth || 320), dpr = Math.min(window.devicePixelRatio || 1, 2), p = Promise.resolve(), k;
+      var n = Math.min(doc.numPages, 25), w = Math.max(280, box.clientWidth || 320), dpr = Math.min(window.devicePixelRatio || 1, 2), p = Promise.resolve(), k;
       if (tk !== CURTOK) return;
-      box.innerHTML = "";
+      soltar(); box.innerHTML = "";
       function pag(k) {
         p = p.then(function () {
           if (tk !== CURTOK) return;
           return doc.getPage(k).then(function (pg) {
-            var v1 = pg.getViewport({ scale: 1 }), v = pg.getViewport({ scale: w * dpr / v1.width }), c = document.createElement("canvas");
+            var v1 = pg.getViewport({ scale: 1 }), v = pg.getViewport({ scale: Math.min(w * dpr, 1500) / v1.width }), c = document.createElement("canvas");
             c.width = Math.floor(v.width); c.height = Math.floor(v.height); c.className = "pvc";
             box.appendChild(c);
-            return pg.render({ canvasContext: c.getContext("2d"), viewport: v }).promise.then(function () { try { pg.cleanup(); } catch (e) {} });
+            return pg.render({ canvasContext: c.getContext("2d"), viewport: v }).promise.then(function () {
+              try { pg.cleanup(); } catch (e) {}
+              /* troca o canvas por imagem (usa menos memória em pedidos grandes) */
+              return new Promise(function (ok) {
+                try {
+                  c.toBlob(function (bl) {
+                    if (bl && c.parentNode) {
+                      var im = new Image(), u = URL.createObjectURL(bl);
+                      URLS.push(u); im.className = "pvc"; im.alt = "Página " + k; im.src = u;
+                      c.parentNode.replaceChild(im, c); c.width = c.height = 0;
+                    }
+                    ok();
+                  }, "image/jpeg", 0.92);
+                } catch (e) { ok(); }
+              });
+            });
           });
         });
       }
@@ -1155,7 +1180,6 @@ LS.del("pp_th");drawHc();drawCats();drawBanner();iniciar();
         $("bob").innerHTML = '<p class="mu">Não foi possível abrir este pedido agora. Ele pode ter saído da lista de pedidos antigos.</p><div class="bacts"><button class="bds" type="button" data-c="bo">Voltar</button></div>';
         return;
       }
-      var wa = zap(r.tel);
       $("bot").textContent = r.nome || "Pedido";
       $("bob").innerHTML =
         '<div class="bom"><span>' + dt(r.ts) + '</span>' +
@@ -1163,9 +1187,8 @@ LS.del("pp_th");drawHc();drawCats();drawBanner();iniciar();
         '<span>CNPJ: ' + esc(r.cnpj || "") + '</span>' +
         '<span class="t">' + esc(r.total || "") + (r.cond ? ' · Tabela de preço médio: ' + esc(r.cond) : '') + '</span></div>' +
         '<div class="pvbox" id="pvb"><p class="mu">' + (r.pdf ? "Carregando a prévia do pedido..." : "Prévia indisponível: este pedido não tem PDF salvo.") + '</p></div>' +
-        '<div class="bacts">' +
+        '<div class="bacts' + (r.pdf ? '' : ' so1') + '">' +
         (r.pdf ? '<button class="bdp" type="button" data-id="' + esc(id) + '">Baixar PDF do pedido</button>' : '') +
-        (wa ? '<a class="bds" href="' + esc(wa) + '" target="_blank" rel="noopener noreferrer">Chamar a cliente no WhatsApp</a>' : '') +
         '<button class="bds" type="button" data-c="bo">Voltar</button></div>';
       if (!r.pdf) return;
       api({ a: "pdf", tok: tok(), id: id }).then(function (p) {
@@ -1196,7 +1219,7 @@ LS.del("pp_th");drawHc();drawCats();drawBanner();iniciar();
   $("bl").addEventListener("click", function (e) { var it = e.target.closest && e.target.closest(".bdl"); if (it) detalhe(it.dataset.id); });
   $("bl").addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { var it = e.target.closest && e.target.closest(".bdl"); if (it) { e.preventDefault(); detalhe(it.dataset.id); } } });
   $("bob").addEventListener("click", function (e) { var b = e.target.closest && e.target.closest(".bdp"); if (b && !b.disabled) baixar(b); });
-  $("bo").addEventListener("close", function () { CURTOK++; });
+  $("bo").addEventListener("close", function () { CURTOK++; soltar(); });
   bell.addEventListener("click", function () { carregar(); abrir(); });
   $("bd").addEventListener("click", function (e) { if (e.target === this) this.close(); });
   $("bo").addEventListener("click", function (e) { if (e.target === this) this.close(); });
