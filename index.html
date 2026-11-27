@@ -591,16 +591,31 @@ body{background:linear-gradient(180deg,var(--bg),var(--tint) 1800px,var(--blush)
 .bom .t{color:var(--ink);font-weight:700}
 .bor{margin:0;padding:14px;max-height:46dvh;overflow:auto;white-space:pre-wrap;word-break:break-word;border:1px solid var(--line);border-radius:18px;background:var(--soft);color:var(--tx);font:500 .82rem/1.45 "Hanken Grotesk",system-ui,sans-serif}
 #bob .bdp{margin-top:14px}
-#bo{width:min(96vw,820px);max-width:96vw;height:calc(100dvh - 20px - env(safe-area-inset-top,0px));max-height:calc(100dvh - 20px - env(safe-area-inset-top,0px));margin:auto;border-radius:var(--r-xl);overflow:hidden;animation:none}
+#bo{width:100vw;max-width:100vw;height:100dvh;max-height:100dvh;margin:0;padding:0;border-radius:0;overflow:hidden;animation:none}
 #bo[open]{display:flex}
-#bo .ob{display:flex;flex-direction:column;flex:1;min-width:0;min-height:0;padding:16px 14px calc(14px + env(safe-area-inset-bottom,0px))}
-#bo .oh.st{position:static;margin:0 0 6px;padding:0}
+@media (min-width:900px){#bo{width:min(98vw,1320px);max-width:98vw;height:calc(100dvh - 24px);max-height:calc(100dvh - 24px);margin:auto;border-radius:var(--r-xl)}}
+#bo .ob{display:flex;flex-direction:column;flex:1;min-width:0;min-height:0;padding:calc(10px + env(safe-area-inset-top,0px)) 10px calc(10px + env(safe-area-inset-bottom,0px))}
+#bo .oh.st{position:static;margin:0 0 6px;padding:0 4px}
+#bo .oh h2{font-size:1.2rem}
 #bo #bob{display:flex;flex-direction:column;flex:1;min-height:0}
-.pvbox{flex:1;min-height:0;margin:6px 0 10px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;border-radius:12px;background:var(--soft)}
-.pvbox>.mu{margin:14px 12px}
-.pvc{display:block;width:100%;height:auto;margin:0 0 8px;box-sizing:border-box;border:1px solid var(--line);background:#fff}
+.pvt{flex:none;display:flex;align-items:center;justify-content:flex-end;gap:8px;margin:0 0 6px}
+.pvt[hidden]{display:none}
+.pvzb{width:46px;height:40px;border:1px solid var(--line2);border-radius:12px;background:var(--surf);color:var(--pkd);font:700 1.3rem/1 "Hanken Grotesk",system-ui,sans-serif;cursor:pointer}
+.pvl{min-width:56px;text-align:center;font:700 .85rem "Hanken Grotesk",system-ui,sans-serif;color:var(--mut)}
+.pvbox{flex:1;min-height:0;margin:0 0 8px;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y pinch-zoom;border-radius:12px;background:var(--soft)}
+.pvp{position:relative;box-sizing:border-box;width:calc(100% * var(--z,1));margin:0 0 8px;background:#fff;border:1px solid var(--line)}
+.pvp img{display:block;width:100%;height:100%}
+.pvbox>.mu,.pvbox>.bom{margin:14px 12px}
+.bom{display:grid;gap:2px}
+.bom b{font-size:1rem;color:var(--ink)}
 .bacts{flex:none;display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-top:0}
 .bacts.so1{grid-template-columns:1fr}
+.bdw{position:relative;margin-top:10px;border-radius:18px;overflow:hidden;background:#e5484d}
+.bdw .bdi{position:relative;margin:0;touch-action:pan-y;user-select:none;-webkit-user-select:none;transition:transform .24s cubic-bezier(.2,.8,.2,1);will-change:transform}
+.bdw .bdi.drag{transition:none}
+.bdx{position:absolute;top:0;right:0;bottom:0;width:104px;display:flex}
+.bdk{appearance:none;-webkit-appearance:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:100%;height:100%;padding:0;border:0;background:transparent;color:#fff;font:700 .8rem "Hanken Grotesk",system-ui,sans-serif;cursor:pointer}
+.bdk[disabled]{opacity:.7;cursor:wait}
 .bds{display:flex;align-items:center;justify-content:center;width:100%;min-height:46px;padding:0 18px;border:1px solid var(--line2);border-radius:99px;background:var(--surf);color:var(--pkd);font:700 .9rem "Hanken Grotesk",system-ui,sans-serif;text-decoration:none;cursor:pointer}
 #bob .bacts .bdp{margin-top:0}
 </style></head><body>
@@ -650,10 +665,10 @@ body{background:linear-gradient(180deg,var(--bg),var(--tint) 1800px,var(--blush)
 <dialog id="bo"><div class="ob"><div class="oh st"><h2 id="bot">Pedido</h2><button class="xs" data-c="bo" aria-label="Fechar">✕</button></div><div id="bob"></div></div></dialog>
 <dialog id="pn"><div class="ob"><h2>Acesso por PIN</h2><p class="mu">Digite o seu PIN.</p><input class="fi2" id="pi" type="password" inputmode="numeric" autocomplete="off" aria-label="PIN de acesso"><p class="er" id="per" hidden>PIN incorreto.</p><button class="go" id="pok">Entrar</button><button class="p" data-c="pn" style="margin-top:12px;width:100%">Cancelar</button></div></dialog>
 <dialog id="ad"><div class="ob"><div class="oh st"><h2>Atualizar estoque</h2><button class="xs" data-c="ad" aria-label="Fechar">✕</button></div><p class="mu" id="adst"></p>
-<div class="sm" style="margin-top:0"><b>Atualização exclusiva via PDF de pronta entrega gerado pelo sistema da fábrica</b><br>Aceitamos somente .pdf de até 40 MB. O catálogo é lido no seu aparelho, sem custo. Entram as grades com até 200 pares por numeração; o que não estiver no PDF sai do catálogo. Os PDFs não trazem o prazo no texto, por isso cada envio é rotulado: VENDOR importa fotos, grades e o preço Imediato; 60, 75 e 90 dias só atualizam o preço do respectivo prazo, cruzando por referência e cor, sem apagar os outros prazos já salvos. Envie os PDFs na ordem que quiser: o botão Confirmar atualização aparece só depois do PDF de 90 dias e atualiza todos de uma só vez.</div>
+<div class="sm" style="margin-top:0"><b>Envie os PDFs de pronta entrega</b> (.pdf, até 40 MB).<br>O PDF VENDOR atualiza fotos, grades e preços; os de 60, 75 e 90 dias atualizam só os preços. O botão Confirmar aparece depois do PDF de 90 dias.</div>
 <div id="slots"></div>
-<div id="bbox" hidden><div class="sm" style="margin-top:14px"><b>Atualizar somente Botas</b><br>Envie o PDF de pronta entrega só de botas. Todos os modelos desse PDF entram direto no filtro "Botas" e o restante do catálogo é mantido.</div>
-<label class="dz" id="dzb" for="afb"><b>Arraste o PDF de Botas aqui</b><span>ou toque para escolher (.pdf, até 40 MB)</span><input id="afb" type="file" accept=".pdf,application/pdf" hidden></label></div>
+<div id="bbox" hidden><div class="sm" style="margin-top:14px"><b>Atualizar somente Botas</b><br>Os modelos do PDF entram no filtro Botas; o resto do catálogo é mantido.</div>
+<label class="dz" id="dzb" for="afb"><b>PDF de Botas</b><span>toque ou arraste o .pdf</span><input id="afb" type="file" accept=".pdf,application/pdf" hidden></label></div>
 <div id="prg" hidden><div class="pbar"><i id="prgi"></i></div><small class="mu" id="prgt"></small></div><div id="asm"></div><div class="rw2"><button class="go" id="acf" hidden>Confirmar atualização</button><button class="p" id="acc" hidden>Cancelar</button></div></div></dialog>
 <dialog id="ab"><div class="ob abx"><div class="abk"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3.5h3l2.3 11.2h10.4l2-8.2H6.2"/></svg></div><h2>Seu carrinho está esperando</h2><p class="lead" id="abt"></p><div class="abs" id="abs"></div><button class="go" id="abgo" type="button">Finalizar meu pedido</button><button class="lk" id="abno" type="button">Continuar vendo o catálogo</button></div></dialog>
 <button class="cart" id="pb" hidden>Ver carrinho</button>
@@ -806,6 +821,7 @@ if(a==="entrar")return rpc("entrar_aparelho",{p_slug:SLUG,p_pin:o.code});
 if(a==="novos")return rpc("pedidos_novos",{p_slug:SLUG,p_tok:o.tok});
 if(a==="pdf")return rpc("pedido_pdf",{p_slug:SLUG,p_tok:o.tok,p_id:o.id});
 if(a==="detalhe")return rpc("pedido_detalhe",{p_slug:SLUG,p_tok:o.tok,p_id:o.id});
+if(a==="apagar")return rpc("apagar_pedido",{p_slug:SLUG,p_tok:o.tok,p_id:o.id});
 if(a==="pedido")return rpc("registrar_pedido",{p_slug:SLUG,p_nome:o.nome,p_tel:o.tel,p_cnpj:o.cnpj,p_total:o.total,p_condicao:o.condicao,p_resumo:o.resumo||"",p_pdf_b64:o.pdfBase64||null}).then(function(r){if(r&&r.ok&&r.email)emailAviso(r.email,r.rep||REP.nome,o.pdfBase64,o.pdfNome);return r});
 return Promise.reject(new Error("acao"))}
 /* envia ao Storage as imagens novas (data:) e troca por link público; se falhar, a imagem segue embutida */
@@ -914,7 +930,7 @@ function enterMaster(v){RCODE=v;SLOT={};LASTB=false;drawSlots();$("adst").textCo
 $("pok").onclick=enter;$("pi").addEventListener("keydown",function(e){if(e.key==="Enter")enter()});
 var MAXB=40*1024*1024;
 function MSG(h){$("asm").innerHTML='<div class="sm">'+h+'</div>'}
-function bad(t){MSG('<span class="al">'+t+'</span><br>O estoque atual foi mantido, sem nenhuma alteração.')}
+function bad(t){MSG('<span class="al">'+t+'</span><br>O estoque atual foi mantido.')}
 function pol(){for(var k in {}){return true}return false}
 function clean(s){s=String(s==null?"":s);s=s.replace(/<\s*(script|style|iframe|object|embed|svg|math)[^>]*>[\s\S]*?<\s*\/\s*\1\s*>/gi,"").replace(/<[^>]*>?/g,"").replace(/&(lt|gt|quot|amp|#x?[0-9a-f]+);/gi," ").replace(/(javascript|vbscript|data)\s*:/gi,"").replace(/[\u0000-\u001f\u007f<>"'`\\]/g," ").replace(/\s+/g," ").trim();return s.slice(0,120)}
 function norm(s){return String(s==null?"":s).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim()}
@@ -966,14 +982,14 @@ base.forEach(function(i){i.g.forEach(function(g){if(vend||g.pr0==null)g.pr0=g.pr
 ["60","75","90"].forEach(function(t){if(!SLOT[t])return;var m=pmap(SLOT[t].items,function(g){return g.pr}),n=0;base.forEach(function(i){var hit=false;i.g.forEach(function(g){var v=plook(m,i,g);if(v!=null){g["pr"+t]=v;hit=true}});if(hit)n++});PZST[t]={n:n,tot:base.length,u:SLOT[t].items.filter(function(i){return!bkeys[i.key]}).length}});
 return base}
 function fin(items,mode,sl){return itemsHash(items).then(function(h){prog(null);var onlyP=mode==="all"&&!SLOT["0"],ult=mode!=="all"||!!SLOT["90"],same=!!CAT&&h===CAT.hash,s=summary(items,mode),st=sl.stat,old=sl.emissao&&sl.emissao!==hoje(),pzl="";
-if(mode==="all")["60","75","90"].forEach(function(t){if(SLOT[t])pzl+='<li>PDF '+ptName(t)+': preço salvo em pr'+t+' para '+PZST[t].n+' de '+PZST[t].tot+' modelos</li>'+(PZST[t].u?'<li class="al">'+plural(PZST[t].u,"modelo deste PDF não está","modelos deste PDF não estão")+(SLOT["0"]?' no PDF VENDOR e será ignorado':' no catálogo: envie também o PDF VENDOR (fotos e grades) para importá-lo')+'</li>':'')});
+if(mode==="all")["60","75","90"].forEach(function(t){if(SLOT[t])pzl+='<li>PDF '+ptName(t)+': preço em '+PZST[t].n+' de '+PZST[t].tot+' modelos</li>'+(PZST[t].u?'<li class="al">'+plural(PZST[t].u,"modelo deste PDF não está","modelos deste PDF não estão")+(SLOT["0"]?(PZST[t].u>1?' no PDF VENDOR e serão ignorados':' no PDF VENDOR e será ignorado'):' no catálogo: envie também o PDF VENDOR')+'</li>':'')});
 pend={items:items,hash:h,mode:mode};
-var head=onlyP?'<b>Atualização de preços</b> sobre o catálogo atual ('+plural(items.length,"modelo","modelos")+'). Fotos, grades e os prazos não enviados agora são mantidos.':'<b>'+plural(items.length,"modelo encontrado","modelos encontrados")+'</b> no PDF ('+plural(st.keep,"grade","grades")+' com até 200 pares por numeração).'+(mode==="bota"?'<p><b>PDF de Botas:</b> todos os modelos entram direto no filtro Botas.</p>':'<p>Preço Imediato salvo em pr0; os preços de 60, 75 e 90 dias já salvos são mantidos.</p>');
-var lst=onlyP?'':'<ul><li>'+plural(s.mant,"modelo continua","modelos continuam")+' com preços e caixas atualizados</li><li>'+plural(s.novos,"modelo novo","modelos novos")+'</li><li>'+plural(s.rem,"modelo atual será removido","modelos atuais serão removidos")+(mode==="bota"?' (botas que não estão neste PDF)':(RECURSOS.uploadBotas?' (não estão no PDF; as Botas atuais são mantidas)':' (não estão no PDF)'))+'</li><li>'+plural(st.gt5+st.mix,"grade fica de fora","grades ficam de fora")+' por ter mais de 200 pares em alguma numeração</li></ul>';
-MSG(head+(pzl?'<ul>'+pzl+'</ul>':'')+lst+(sl.emissao?'<p>PDF emitido em '+esc(sl.emissao)+'.</p>':'')+(old?'<p class="al">Atenção: este PDF não é de hoje.</p>':'')+(same?'<p class="al">Atenção: estes dados são idênticos à última atualização enviada.</p>':'')+(st.sempreco&&!onlyP?'<p class="al">'+plural(st.sempreco,"grade veio sem preço no PDF e aparece como preço a confirmar","grades vieram sem preço no PDF e aparecem como preço a confirmar")+'.</p>':'')+(ult?'<p><b>Confirmar atualização?</b> ':'<p><b>PDF lido.</b> Envie os demais PDFs; o botão único de confirmação aparece só depois do PDF de 90 dias e atualiza todos de uma vez. ')+(mode==="bota"?'Só as Botas serão atualizadas; o restante do catálogo é mantido.':(onlyP?'Só os preços dos prazos enviados serão atualizados.':(RECURSOS.uploadBotas?'Tudo o que não está no PDF será apagado do catálogo, exceto as Botas.':'Tudo o que não está no PDF será apagado do catálogo.')))+'</p>');
+var head=onlyP?'<b>Atualização de preços</b> ('+plural(items.length,"modelo","modelos")+'). Fotos, grades e prazos não enviados agora são mantidos.':(mode==="bota"?'<b>PDF de Botas:</b> '+plural(items.length,"modelo entra","modelos entram")+' no filtro Botas.':'<b>'+plural(items.length,"modelo","modelos")+' no PDF.</b>'),ign=st.gt5+st.mix;
+var lst=onlyP?'':'<ul><li>'+plural(s.mant,"modelo atualizado","modelos atualizados")+'</li>'+(s.novos?'<li>'+plural(s.novos,"modelo novo","modelos novos")+'</li>':'')+(s.rem?'<li class="al">'+plural(s.rem,"modelo será removido","modelos serão removidos")+(mode==="bota"?' (botas fora deste PDF)':' (não estão no PDF)')+'</li>':'')+(ign?'<li>'+plural(ign,"grade ignorada","grades ignoradas")+' (mais de 200 pares)</li>':'')+'</ul>';
+MSG(head+(pzl?'<ul>'+pzl+'</ul>':'')+lst+(old?'<p class="al">Atenção: este PDF não é de hoje'+(sl.emissao?' ('+esc(sl.emissao)+')':'')+'.</p>':'')+(same?'<p class="al">Atenção: dados idênticos à última atualização enviada.</p>':'')+(st.sempreco&&!onlyP?'<p class="al">'+plural(st.sempreco,"grade sem preço no PDF aparece","grades sem preço no PDF aparecem")+' como preço a confirmar.</p>':'')+(ult?'<p><b>Confirmar atualização?</b> '+(mode==="bota"?'Só as Botas serão atualizadas.':(onlyP?'Só os preços dos prazos enviados serão atualizados.':(RECURSOS.uploadBotas?'O que não está no PDF será apagado, exceto as Botas.':'O que não está no PDF será apagado.')))+'</p>':'<p><b>PDF lido.</b> Envie os demais; o botão Confirmar aparece depois do PDF de 90 dias.</p>'));
 $("acf").textContent=same?"Aplicar mesmo assim":"Confirmar atualização";$("acf").hidden=!ult;$("acc").hidden=false})}
 function render(){if(LASTB&&SLOT.bota)return fin(SLOT.bota.items,"bota",SLOT.bota);
-if(!SLOT["0"]&&!P.length){MSG('<b>O catálogo está vazio.</b><br>Envie primeiro o PDF VENDOR para criar o catálogo; depois os PDFs de 60, 75 e 90 dias podem ser enviados separadamente.');$("acf").hidden=true;$("acc").hidden=false;return Promise.resolve()}
+if(!SLOT["0"]&&!P.length){MSG('<b>Catálogo vazio.</b> Envie primeiro o PDF VENDOR.');$("acf").hidden=true;$("acc").hidden=false;return Promise.resolve()}
 var sl=SLOT["0"]||SLOT["60"]||SLOT["75"]||SLOT["90"];if(!sl)return Promise.resolve();return fin(mergePrices(),"all",sl)}
 function loadSlot(t,file){if(!file||(t==="bota"&&!RECURSOS.uploadBotas))return;pend=null;$("acf").hidden=true;$("acc").hidden=true;prog(null);
 if(!/\.pdf$/i.test(file.name))return bad("Formato não aceito. Envie somente o PDF de pronta entrega gerado pelo sistema da fábrica.");
@@ -984,7 +1000,7 @@ file.slice(0,5).arrayBuffer().then(function(b){var u=new Uint8Array(b);if(String
 .then(function(pages){prog(90,"Conferindo os produtos...");var r=parsePdf(pages,t==="bota"?"O":"");if(!r.items.length){prog(null);return bad(t==="bota"?"Não encontrei nenhuma bota com grades de até 200 pares por numeração neste PDF. Confira se é o PDF de pronta entrega de botas.":"Não encontrei nenhum modelo com grades de até 200 pares por numeração. Confira se é o PDF de pronta entrega da fábrica.")}
 SLOT[t]={name:file.name,items:r.items,stat:r.stat,emissao:r.emissao};LASTB=t==="bota";var sn=$("sn-"+t);if(sn)sn.textContent=file.name;return render()})
 .catch(function(e){prog(null);var m=e&&e.message;bad(m==="fmt"?"O arquivo não parece ser um PDF válido.":m==="grande"?"O PDF tem páginas demais (limite de 800).":m==="x"?"Não foi possível carregar o leitor de PDF. Verifique a internet e tente de novo.":"Não foi possível ler este PDF. Use o PDF de pronta entrega gerado pelo sistema da fábrica.")})}
-function drawSlots(){var h="";PT.forEach(function(x){h+='<label class="dz slot" id="dz-'+x[0]+'" for="af-'+x[0]+'" style="padding:14px 12px"><b>PDF '+x[1]+'</b><span id="sn-'+x[0]+'">'+(x[0]==="0"?"Importa fotos, grades e salva o preço em pr0 – ":"Só preços: salva em pr"+x[0]+" – ")+'toque ou arraste o .pdf (até 40 MB)</span><input id="af-'+x[0]+'" type="file" accept=".pdf,application/pdf" hidden></label>'});$("slots").innerHTML=h;PT.forEach(function(x){wire("dz-"+x[0],"af-"+x[0],x[0])})}
+function drawSlots(){var h="";PT.forEach(function(x){h+='<label class="dz slot" id="dz-'+x[0]+'" for="af-'+x[0]+'" style="padding:14px 12px"><b>PDF '+x[1]+'</b><span id="sn-'+x[0]+'">'+(x[0]==="0"?"Fotos, grades e preços":"Só preços")+' · toque ou arraste o .pdf</span><input id="af-'+x[0]+'" type="file" accept=".pdf,application/pdf" hidden></label>'});$("slots").innerHTML=h;PT.forEach(function(x){wire("dz-"+x[0],"af-"+x[0],x[0])})}
 function skey(p){return pkey(p).replace(/[^A-Z0-9.\-_\/]/g,"")}
 function recOf(p){return{key:skey(p),l:p.l,o:p.o,k:p.k,ih:p.ih,img:"",g:p.g.filter(gok).map(function(g){return{sz:g.sz,q:g.q,pr:g.pr,pr0:g.pr0,pr60:g.pr60,pr75:g.pr75,pr90:g.pr90,par:g.par,cx:g.cx,d:g.d}})}}
 function publish(items,hash,mode){var inN={};items.forEach(function(i){inN[i.key]=1});var recs=items.map(function(i){var old=PM[i.key];return{key:i.key,l:i.l,o:i.o,k:i.k,ih:i.ih,img:(old&&old.ih&&old.ih===i.ih)?"":i.img,g:i.g.filter(function(x){return x.cx!==0})}}).filter(function(r){return r.g.length});
@@ -1066,6 +1082,7 @@ LS.del("pp_th");drawHc();drawCats();drawBanner();iniciar();
 /* ---------- sino do representante: só funciona em aparelhos que já digitaram o PIN dele ---------- */
 (function () {
   var bell = $("bell"), badge = $("bn"), LIST = [], BUSY = false, TMR = null, CUR = null, CURTOK = 0;
+  var ZL = [1, 1.5, 2, 2.5, 3, 4], Z = window.innerWidth < 700 ? 2 : 1, PG = null, URLS = [], SW = 104, OPEN = null, DRAG = null, SUPRIME = false;
   function tok() { return LS.get("rtok", ""); }
   function seen() { return LS.get("rseen", 0); }
   function mostrar(on) { bell.hidden = !on; document.documentElement.classList.toggle("isrep", !!on); }
@@ -1079,7 +1096,7 @@ LS.del("pp_th");drawHc();drawCats();drawBanner();iniciar();
     BUSY = true;
     api({ a: "novos", tok: tok() }).then(function (r) {
       BUSY = false;
-      if (r && r.ok) { LIST = r.l || []; pintar(); }
+      if (r && r.ok) { LIST = r.l || []; pintar(); if ($("bd").open && !DRAG && !OPEN) desenhar(); }
       else if (r && r.erro === "token") { LS.set("rtok", ""); mostrar(false); }
     }).catch(function () { BUSY = false; });
   }
@@ -1109,67 +1126,164 @@ LS.del("pp_th");drawHc();drawCats();drawBanner();iniciar();
       aviso("Sino não ativado: não foi possível falar com o Supabase (" + ((err && err.message) || "sem conexão") + "). Confira SUPABASE_URL e SUPABASE_KEY.");
     });
   };
-  /* lista dos últimos pedidos (o servidor guarda só os 60 mais recentes e mostra 30) */
-  function abrir() {
-    var s = seen(), top = LIST.reduce(function (m, o) { return Math.max(m, o.ts); }, s);
-    $("bm").textContent = LIST.length ? "Toque em um pedido para ver a prévia e baixar o PDF. Os novos ficam em destaque." : "";
+
+  /* ---------- lista dos pedidos (deslize para a esquerda para apagar) ---------- */
+  var ICO = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg>';
+  function desenhar() {
+    var s = seen();
+    OPEN = null;
+    $("bm").textContent = LIST.length ? "Toque em um pedido para abrir. Deslize para a esquerda para apagar." : "";
     $("bl").innerHTML = LIST.length ? LIST.map(function (o) {
-      return '<div class="bdi bdl' + (o.ts > s ? ' nova' : '') + '" role="button" tabindex="0" data-id="' + esc(o.id) + '"><b>' + esc(o.nome || "") + '</b>' +
+      return '<div class="bdw" data-id="' + esc(o.id) + '"><div class="bdx"><button type="button" class="bdk" tabindex="-1" aria-label="Apagar pedido">' + ICO + '<span>Apagar</span></button></div>' +
+        '<div class="bdi bdl' + (o.ts > s ? ' nova' : '') + '" role="button" tabindex="0" data-id="' + esc(o.id) + '"><b>' + esc(o.nome || "") + '</b>' +
         '<span class="t">' + esc(o.total || "") + (o.cond ? ' · Tabela de preço médio: ' + esc(o.cond) : '') + '</span>' +
         '<span>' + dt(o.ts) + (o.tel ? ' · ' + esc(o.tel) : '') + '</span>' +
-        '<span class="bdv">Ver pedido ›</span></div>';
-    }).join("") : '<div class="empty">Nenhum pedido recebido ainda.</div>';
+        '<span class="bdv">Ver pedido ›</span></div></div>';
+    }).join("") : '<div class="empty">Nenhum pedido no histórico.</div>';
+  }
+  function abrir() {
+    var s = seen(), top = LIST.reduce(function (m, o) { return Math.max(m, o.ts); }, s);
+    desenhar();
     $("bd").showModal();
     LS.set("rseen", top); pintar();
   }
-  /* prévia visual: desenha as páginas do próprio PDF do pedido (com as fotos), sempre na largura total da janela */
-  var URLS = [];
+  function posicionar(it, x, anim) { it.classList.toggle("drag", !anim); it.style.transform = x ? "translateX(" + x + "px)" : ""; }
+  function fechar(it) { if (!it) return; posicionar(it, 0, true); var k = it.parentNode && it.parentNode.querySelector(".bdk"); if (k) k.tabIndex = -1; if (OPEN === it) OPEN = null; }
+  function abrirX(it) { if (OPEN && OPEN !== it) fechar(OPEN); posicionar(it, -SW, true); var k = it.parentNode.querySelector(".bdk"); if (k) k.tabIndex = 0; OPEN = it; }
+  $("bl").addEventListener("pointerdown", function (e) {
+    var it = e.target.closest && e.target.closest(".bdl");
+    if (!it || (e.pointerType === "mouse" && e.button !== 0)) return;
+    if (OPEN && OPEN !== it) fechar(OPEN);
+    DRAG = { it: it, x: e.clientX, y: e.clientY, base: OPEN === it ? -SW : 0, pos: OPEN === it ? -SW : 0, dir: 0, id: e.pointerId };
+  });
+  $("bl").addEventListener("pointermove", function (e) {
+    if (!DRAG || e.pointerId !== DRAG.id) return;
+    var dx = e.clientX - DRAG.x, dy = e.clientY - DRAG.y;
+    if (!DRAG.dir) {
+      if (Math.abs(dx) > 7 && Math.abs(dx) > Math.abs(dy)) { DRAG.dir = 1; try { DRAG.it.setPointerCapture(e.pointerId); } catch (x) {} }
+      else if (Math.abs(dy) > 7) { DRAG.dir = 2; }
+    }
+    if (DRAG.dir !== 1) return;
+    var p = DRAG.base + dx;
+    if (p > 0) p = 0;
+    if (p < -SW) p = -SW - (Math.min(-p - SW, 80) * 0.25);
+    DRAG.pos = p; posicionar(DRAG.it, p, false);
+  });
+  function soltarDrag(e) {
+    if (!DRAG || (e && e.pointerId !== DRAG.id)) return;
+    var d = DRAG; DRAG = null;
+    if (d.dir === 1) {
+      SUPRIME = true; setTimeout(function () { SUPRIME = false; }, 350);
+      if (d.pos < -SW * 0.45) abrirX(d.it); else fechar(d.it);
+    }
+  }
+  $("bl").addEventListener("pointerup", soltarDrag);
+  $("bl").addEventListener("pointercancel", soltarDrag);
+  function apagar(btn) {
+    var w = btn.closest(".bdw"); if (!w || btn.disabled) return;
+    var id = w.dataset.id, rot = btn.innerHTML;
+    btn.disabled = true; btn.querySelector("span").textContent = "Apagando...";
+    api({ a: "apagar", tok: tok(), id: id }).then(function (r) {
+      if (r && r.ok) {
+        LIST = LIST.filter(function (o) { return o.id !== id; }); pintar();
+        w.style.height = w.offsetHeight + "px"; w.style.transition = "height .25s ease, margin .25s ease, opacity .25s ease";
+        requestAnimationFrame(function () { w.style.height = "0"; w.style.marginTop = "0"; w.style.opacity = "0"; });
+        OPEN = null;
+        setTimeout(function () { if (w.parentNode) w.parentNode.removeChild(w); if (!LIST.length) desenhar(); }, 280);
+      } else if (r && r.erro === "token") { LS.set("rtok", ""); mostrar(false); $("bd").close(); }
+      else { btn.disabled = false; btn.innerHTML = rot; aviso("Não foi possível apagar o pedido agora."); }
+    }).catch(function () { btn.disabled = false; btn.innerHTML = rot; aviso("Sem conexão para apagar o pedido. Tente de novo."); });
+  }
+  $("bl").addEventListener("click", function (e) {
+    var k = e.target.closest && e.target.closest(".bdk");
+    if (k) { apagar(k); return; }
+    var it = e.target.closest && e.target.closest(".bdl");
+    if (!it || SUPRIME) return;
+    if (OPEN === it) { fechar(it); return; }
+    detalhe(it.dataset.id);
+  });
+  $("bl").addEventListener("keydown", function (e) {
+    var it = e.target.closest && e.target.closest(".bdl");
+    if (!it) return;
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); detalhe(it.dataset.id); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); abrirX(it); }
+    else if (e.key === "ArrowRight" || e.key === "Escape") { if (OPEN === it) { e.preventDefault(); e.stopPropagation(); fechar(it); } }
+  });
+
+  /* ---------- janela do pedido: prévia do PDF o maior possível, nítida, com zoom ---------- */
   function soltar() { URLS.forEach(function (u) { try { URL.revokeObjectURL(u); } catch (e) {} }); URLS = []; }
+  function fim() { soltar(); if (PG) { if (PG.obs) PG.obs.disconnect(); try { PG.doc.destroy(); } catch (e) {} } PG = null; }
+  function renderPag(d) {
+    var k = +d.dataset.k, my = PG;
+    if (!my || d._r || d._busy) return Promise.resolve();
+    d._busy = true;
+    return my.doc.getPage(k).then(function (pg) {
+      if (PG !== my || my.tk !== CURTOK) { d._busy = false; return; }
+      var cw = d.clientWidth; if (!cw) { d._busy = false; return; }
+      var dpr = Math.max(window.devicePixelRatio || 1, 1.5), v1 = pg.getViewport({ scale: 1 }), v = pg.getViewport({ scale: Math.min(cw * dpr, 2400) / v1.width }), c = document.createElement("canvas");
+      c.width = Math.floor(v.width); c.height = Math.floor(v.height);
+      return pg.render({ canvasContext: c.getContext("2d"), viewport: v }).promise.then(function () {
+        try { pg.cleanup(); } catch (e) {}
+        return new Promise(function (ok) {
+          function pronto(el, u) { if (PG === my && d.parentNode) { d.innerHTML = ""; d.appendChild(el); d._r = true; if (u) { d._u = u; URLS.push(u); } } d._busy = false; c.width = c.height = 0; ok(); }
+          try {
+            c.toBlob(function (bl) {
+              if (bl) { var im = new Image(), u = URL.createObjectURL(bl); im.alt = "Página " + k; im.src = u; pronto(im, u); }
+              else { d._busy = false; ok(); }
+            }, "image/jpeg", 0.95);
+          } catch (e) { d._busy = false; ok(); }
+        });
+      });
+    }).catch(function () { d._busy = false; });
+  }
+  function descarregar(d) { if (d._r) { d.innerHTML = ""; if (d._u) { try { URL.revokeObjectURL(d._u); } catch (e) {} d._u = null; } d._r = false; } }
+  function construir() {
+    var box = PG.box, k, d, pags = [];
+    if (PG.obs) PG.obs.disconnect();
+    soltar(); box.innerHTML = "";
+    box.style.setProperty("--z", Z);
+    for (k = 1; k <= PG.n; k++) {
+      d = document.createElement("div"); d.className = "pvp"; d.dataset.k = k; d.style.aspectRatio = "1 / " + PG.ratio;
+      box.appendChild(d); pags.push(d);
+    }
+    if (PG.mais) box.insertAdjacentHTML("beforeend", '<p class="mu">Mostrando as primeiras ' + PG.n + ' páginas. Baixe o PDF para ver tudo.</p>');
+    var q = Promise.resolve();
+    function fila(d) { q = q.then(function () { return renderPag(d); }); }
+    if ("IntersectionObserver" in window) {
+      PG.obs = new IntersectionObserver(function (en) { en.forEach(function (x) { if (x.isIntersecting) fila(x.target); else descarregar(x.target); }); }, { root: box, rootMargin: "100% 0px" });
+      pags.forEach(function (p) { PG.obs.observe(p); });
+    } else { pags.slice(0, 12).forEach(fila); }
+    var l = $("pvl"); if (l) l.textContent = Math.round(Z * 100) + "%";
+  }
   function prever(b64, box, tk) {
     return loadPdf().then(function (L) {
       var bin = atob(b64), u = new Uint8Array(bin.length), i;
       for (i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
       return L.getDocument({ data: u, isEvalSupported: false }).promise;
     }).then(function (doc) {
-      var n = Math.min(doc.numPages, 25), w = Math.max(280, box.clientWidth || 320), dpr = Math.min(window.devicePixelRatio || 1, 2), p = Promise.resolve(), k;
-      if (tk !== CURTOK) return;
-      soltar(); box.innerHTML = "";
-      function pag(k) {
-        p = p.then(function () {
-          if (tk !== CURTOK) return;
-          return doc.getPage(k).then(function (pg) {
-            var v1 = pg.getViewport({ scale: 1 }), v = pg.getViewport({ scale: Math.min(w * dpr, 1500) / v1.width }), c = document.createElement("canvas");
-            c.width = Math.floor(v.width); c.height = Math.floor(v.height); c.className = "pvc";
-            box.appendChild(c);
-            return pg.render({ canvasContext: c.getContext("2d"), viewport: v }).promise.then(function () {
-              try { pg.cleanup(); } catch (e) {}
-              /* troca o canvas por imagem (usa menos memória em pedidos grandes) */
-              return new Promise(function (ok) {
-                try {
-                  c.toBlob(function (bl) {
-                    if (bl && c.parentNode) {
-                      var im = new Image(), u = URL.createObjectURL(bl);
-                      URLS.push(u); im.className = "pvc"; im.alt = "Página " + k; im.src = u;
-                      c.parentNode.replaceChild(im, c); c.width = c.height = 0;
-                    }
-                    ok();
-                  }, "image/jpeg", 0.92);
-                } catch (e) { ok(); }
-              });
-            });
-          });
-        });
-      }
-      for (k = 1; k <= n; k++) pag(k);
-      return p.then(function () {
-        if (doc.numPages > n && tk === CURTOK) box.insertAdjacentHTML("beforeend", '<p class="mu">Mostrando as primeiras ' + n + ' páginas. Baixe o PDF para ver tudo.</p>');
-        try { doc.destroy(); } catch (e) {}
+      if (tk !== CURTOK) { try { doc.destroy(); } catch (e) {} return; }
+      return doc.getPage(1).then(function (p1) {
+        var v = p1.getViewport({ scale: 1 });
+        PG = { doc: doc, box: box, tk: tk, ratio: v.height / v.width, n: Math.min(doc.numPages, 25), mais: doc.numPages > 25 };
+        construir();
       });
     });
   }
-  /* janela pop-up do pedido: prévia visual do PDF + baixar PDF + WhatsApp + voltar */
+  function zoom(dir) {
+    if (!PG) return;
+    var i = ZL.indexOf(Z); if (i < 0) i = 2;
+    var j = Math.max(0, Math.min(ZL.length - 1, i + dir)); if (j === i) return;
+    var box = PG.box, fy = box.scrollHeight ? box.scrollTop / box.scrollHeight : 0, fx = box.scrollWidth ? box.scrollLeft / box.scrollWidth : 0;
+    Z = ZL[j]; construir();
+    box.scrollTop = fy * box.scrollHeight; box.scrollLeft = fx * box.scrollWidth;
+  }
+  /* só aparece como reserva quando o PDF não está disponível (o PDF já traz todos esses dados) */
+  function reserva(r) {
+    return '<div class="bom"><b>' + esc(r.nome || "") + '</b><span>' + dt(r.ts) + '</span><span>Telefone: ' + esc(r.tel || "") + '</span><span>CNPJ: ' + esc(r.cnpj || "") + '</span>' +
+      '<span class="t">' + esc(r.total || "") + (r.cond ? ' · Tabela de preço médio: ' + esc(r.cond) : '') + '</span></div>';
+  }
   function detalhe(id) {
-    var tk = ++CURTOK; CUR = { id: id, b64: "", nome: "" };
+    var tk = ++CURTOK; fim(); CUR = { id: id, b64: "", nome: "" };
     $("bot").textContent = "Pedido";
     $("bob").innerHTML = '<p class="mu">Carregando o pedido...</p>';
     $("bo").showModal();
@@ -1177,30 +1291,27 @@ LS.del("pp_th");drawHc();drawCats();drawBanner();iniciar();
       if (tk !== CURTOK) return;
       if (!r || !r.ok) {
         if (r && r.erro === "token") { LS.set("rtok", ""); mostrar(false); $("bo").close(); $("bd").close(); return; }
-        $("bob").innerHTML = '<p class="mu">Não foi possível abrir este pedido agora. Ele pode ter saído da lista de pedidos antigos.</p><div class="bacts"><button class="bds" type="button" data-c="bo">Voltar</button></div>';
+        $("bob").innerHTML = '<p class="mu">Não foi possível abrir este pedido agora. Ele pode ter sido apagado ou ter saído do histórico.</p><div class="bacts so1"><button class="bds" type="button" data-c="bo">Voltar</button></div>';
         return;
       }
-      $("bot").textContent = r.nome || "Pedido";
+      CUR.r = r;
       $("bob").innerHTML =
-        '<div class="bom"><span>' + dt(r.ts) + '</span>' +
-        '<span>Telefone: ' + esc(r.tel || "") + '</span>' +
-        '<span>CNPJ: ' + esc(r.cnpj || "") + '</span>' +
-        '<span class="t">' + esc(r.total || "") + (r.cond ? ' · Tabela de preço médio: ' + esc(r.cond) : '') + '</span></div>' +
-        '<div class="pvbox" id="pvb"><p class="mu">' + (r.pdf ? "Carregando a prévia do pedido..." : "Prévia indisponível: este pedido não tem PDF salvo.") + '</p></div>' +
+        '<div class="pvt" id="pvt"' + (r.pdf ? '' : ' hidden') + '><button type="button" class="pvzb" data-z="-1" aria-label="Diminuir o zoom">−</button><span class="pvl" id="pvl"></span><button type="button" class="pvzb" data-z="1" aria-label="Aumentar o zoom">+</button></div>' +
+        '<div class="pvbox" id="pvb">' + (r.pdf ? '<p class="mu">Carregando a prévia do pedido...</p>' : reserva(r) + '<p class="mu">Prévia indisponível: este pedido não tem PDF salvo.</p>') + '</div>' +
         '<div class="bacts' + (r.pdf ? '' : ' so1') + '">' +
         (r.pdf ? '<button class="bdp" type="button" data-id="' + esc(id) + '">Baixar PDF do pedido</button>' : '') +
         '<button class="bds" type="button" data-c="bo">Voltar</button></div>';
       if (!r.pdf) return;
+      function falha(msg) { if (tk === CURTOK && $("pvb")) { $("pvb").innerHTML = reserva(r) + '<p class="mu">' + msg + ' Você ainda pode baixar o PDF.</p>'; if ($("pvt")) $("pvt").hidden = true; } }
       api({ a: "pdf", tok: tok(), id: id }).then(function (p) {
         if (tk !== CURTOK) return;
-        var box = $("pvb");
         if (p && p.ok && p.b64) {
           CUR.b64 = p.b64; CUR.nome = p.nome || "";
-          return prever(p.b64, box, tk).catch(function () { if (tk === CURTOK) box.innerHTML = '<p class="mu">Não foi possível montar a prévia agora. Você ainda pode baixar o PDF.</p>'; });
+          return prever(p.b64, $("pvb"), tk).catch(function () { falha("Não foi possível montar a prévia agora."); });
         }
-        box.innerHTML = '<p class="mu">Não foi possível carregar a prévia agora. Você ainda pode baixar o PDF.</p>';
-      }).catch(function () { if (tk === CURTOK && $("pvb")) $("pvb").innerHTML = '<p class="mu">Sem conexão para carregar a prévia. Você ainda pode baixar o PDF.</p>'; });
-    }).catch(function () { if (tk === CURTOK) $("bob").innerHTML = '<p class="mu">Sem conexão para abrir o pedido. Tente de novo.</p><div class="bacts"><button class="bds" type="button" data-c="bo">Voltar</button></div>'; });
+        falha("Não foi possível carregar a prévia agora.");
+      }).catch(function () { falha("Sem conexão para carregar a prévia."); });
+    }).catch(function () { if (tk === CURTOK) $("bob").innerHTML = '<p class="mu">Sem conexão para abrir o pedido. Tente de novo.</p><div class="bacts so1"><button class="bds" type="button" data-c="bo">Voltar</button></div>'; });
   }
   function salvar(b64, nome) {
     dlFile(pdfFile({ b64: b64, nome: "Pedido-Pampili-" + String(nome || "").replace(/[^A-Za-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 30) + ".pdf" }));
@@ -1216,12 +1327,14 @@ LS.del("pp_th");drawHc();drawCats();drawBanner();iniciar();
       else aviso("Não foi possível baixar o PDF deste pedido.");
     }).catch(function () { btn.disabled = false; btn.textContent = rotulo; aviso("Sem conexão para baixar o PDF. Tente de novo."); });
   }
-  $("bl").addEventListener("click", function (e) { var it = e.target.closest && e.target.closest(".bdl"); if (it) detalhe(it.dataset.id); });
-  $("bl").addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { var it = e.target.closest && e.target.closest(".bdl"); if (it) { e.preventDefault(); detalhe(it.dataset.id); } } });
-  $("bob").addEventListener("click", function (e) { var b = e.target.closest && e.target.closest(".bdp"); if (b && !b.disabled) baixar(b); });
-  $("bo").addEventListener("close", function () { CURTOK++; soltar(); });
+  $("bob").addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest(".bdp"); if (b && !b.disabled) { baixar(b); return; }
+    var z = e.target.closest && e.target.closest(".pvzb"); if (z) zoom(+z.dataset.z);
+  });
+  $("bo").addEventListener("close", function () { CURTOK++; fim(); });
   bell.addEventListener("click", function () { carregar(); abrir(); });
   $("bd").addEventListener("click", function (e) { if (e.target === this) this.close(); });
+  $("bd").addEventListener("close", function () { OPEN = null; DRAG = null; });
   $("bo").addEventListener("click", function (e) { if (e.target === this) this.close(); });
   document.addEventListener("visibilitychange", function () { if (!document.hidden) { carregar(); } ciclo(); });
   if (tok()) { mostrar(true); carregar(); ciclo(); }
