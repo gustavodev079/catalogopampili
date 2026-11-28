@@ -618,6 +618,14 @@ body{background:linear-gradient(180deg,var(--bg),var(--tint) 1800px,var(--blush)
 .bdk[disabled]{opacity:.7;cursor:wait}
 .bds{display:flex;align-items:center;justify-content:center;width:100%;min-height:46px;padding:0 18px;border:1px solid var(--line2);border-radius:99px;background:var(--surf);color:var(--pkd);font:700 .9rem "Hanken Grotesk",system-ui,sans-serif;text-decoration:none;cursor:pointer}
 #bob .bacts .bdp{margin-top:0}
+#bc{width:min(92vw,420px);max-width:92vw;margin:auto;padding:0;border-radius:var(--r-xl);animation:none}
+#bc .ob{padding:20px 18px 16px}
+#bc h2{margin:0 0 8px}
+#bc .bacts{grid-template-columns:1fr 1fr;margin-top:14px}
+.bcs{display:flex;align-items:center;justify-content:center;min-height:46px;padding:0 14px;border:0;border-radius:99px;background:#e5484d;color:#fff;font:700 .9rem "Hanken Grotesk",system-ui,sans-serif;cursor:pointer}
+.ol .th{cursor:pointer}
+.gd.gdhl{animation:gdhl 1.8s ease}
+@keyframes gdhl{0%,65%{box-shadow:0 0 0 3px var(--pk)}100%{box-shadow:0 0 0 0 transparent}}
 </style></head><body>
 <header class="hero" id="top">
 <div class="hbar"><div class="hw"><div class="tl">
@@ -663,6 +671,7 @@ body{background:linear-gradient(180deg,var(--bg),var(--tint) 1800px,var(--blush)
 <dialog id="bd"><div class="ob"><div class="oh st"><h2>Pedidos recebidos</h2><button class="xs" data-c="bd" aria-label="Fechar">✕</button></div><p class="mu" id="bm"></p><div id="bl"></div></div></dialog>
 <dialog id="tp"><div class="ob"><div class="oh st"><h2>Selecione a tabela de preço</h2><button class="xs" data-c="tp" aria-label="Fechar">✕</button></div><p class="mu">Antes de adicionar o primeiro produto, escolha a tabela de preço médio do seu pedido. Os preços do catálogo e do carrinho passam a seguir a tabela escolhida. Você pode trocar depois, a qualquer momento, pelos botões no topo do catálogo.</p><div id="tpz"></div><button class="go" id="tpgo" type="button" disabled>Adicionar ao carrinho</button></div></dialog>
 <dialog id="bo"><div class="ob"><div class="oh st"><h2 id="bot">Pedido</h2><button class="xs" data-c="bo" aria-label="Fechar">✕</button></div><div id="bob"></div></div></dialog>
+<dialog id="bc"><div class="ob"><h2>Apagar pedido?</h2><p class="mu">Tem certeza de que quer apagar <b id="bcn">este pedido</b>? O pedido e o PDF dele serão excluídos e isso não pode ser desfeito.</p><div class="bacts"><button class="bcs" id="bcs" type="button">Sim, apagar</button><button class="bds" id="bcc" type="button">Cancelar</button></div></div></dialog>
 <dialog id="pn"><div class="ob"><h2>Acesso por PIN</h2><p class="mu">Digite o seu PIN.</p><input class="fi2" id="pi" type="password" inputmode="numeric" autocomplete="off" aria-label="PIN de acesso"><p class="er" id="per" hidden>PIN incorreto.</p><button class="go" id="pok">Entrar</button><button class="p" data-c="pn" style="margin-top:12px;width:100%">Cancelar</button></div></dialog>
 <dialog id="ad"><div class="ob"><div class="oh st"><h2>Atualizar estoque</h2><button class="xs" data-c="ad" aria-label="Fechar">✕</button></div><p class="mu" id="adst"></p>
 <div class="sm" style="margin-top:0"><b>Envie os PDFs de pronta entrega</b> (.pdf, até 40 MB).<br>O PDF VENDOR atualiza fotos, grades e preços; os de 60, 75 e 90 dias atualizam só os preços. O botão Confirmar aparece depois do PDF de 90 dias.</div>
@@ -774,13 +783,13 @@ function chg(id,d){if(d>0&&window.tpAsk&&tpAsk(function(){chg(id,d);if($("sh").o
 /* ---------- pedido ---------- */
 function tot(){var r={cx:0,par:0,val:0,sp:false,fpp:0};order.forEach(function(o){var g=GI[o.g].g,p=prc(g,o.z);if(o.fp){var fn=sumA(o.fp);r.fpp+=fn;r.par+=fn;if(p)r.val+=fn*p;else r.sp=true;return}r.cx+=o.n;r.par+=o.n*g.par;if(p)r.val+=o.n*g.par*p;else r.sp=true});return r}
 function upd(){var t=tot(),b=$("pb");b.hidden=!order.length;b.textContent="Ver carrinho";b.classList.remove("b");void b.offsetWidth;b.classList.add("b");saveCart();var cs=$("hq-cs");if(cs){cs.textContent=cartTxt();$("hq-c").classList.toggle("pri",!!order.length)}}
-function ol(){var row=function(o,k){var x=GI[o.g],g=x.g,p=x.p;if(o.fp){var tp=sumA(o.fp);return'<div class="ol"><img class="th" loading="lazy" decoding="async" alt="Foto do modelo '+esc(p.m)+'" src="'+p.img+'"><div><b>'+esc(p.l)+'</b> – '+esc(p.o)+' <em class="fpb">Fast Pink</em><small>Modelo '+esc(p.m)+', '+esc(fpTxt(g,o.fp))+'</small><small class="v">'+plural(tp,isUN(g.sz)?"unidade":"par",isUN(g.sz)?"unidades":"pares")+(prc(g,o.z)?" – "+fmt(prc(g,o.z)*tp):" – preço a confirmar")+'</small></div><span class="qc"><button data-k="'+k+'" data-rm="1" aria-label="Remover">✕</button></span></div>'}return'<div class="ol"><img class="th" loading="lazy" decoding="async" alt="Foto do modelo '+esc(p.m)+'" src="'+p.img+'"><div><b>'+esc(p.l)+'</b> – '+esc(p.o)+'<small>Modelo '+esc(p.m)+(isUN(g.sz)&&g.par===1?", unidade":', grade '+esc(gradeTxt(g.sz))+', '+plural(g.par,isUN(g.sz)?"peça":"par",isUN(g.sz)?"peças":"pares")+' por caixa')+'</small><small class="v">'+(prc(g,o.z)?fmt(prc(g,o.z)*g.par*o.n):"preço a confirmar")+'</small></div><span class="qc"><button data-k="'+k+'" data-d="-1" aria-label="Menos">−</button><input class="qn" type="number" min="1"'+(g.cx?' max="'+g.cx+'"':'')+' inputmode="numeric" data-k="'+k+'" value="'+o.n+'"><button data-k="'+k+'" data-d="1" aria-label="Mais">+</button></span></div>'};
+function ol(){var row=function(o,k){var x=GI[o.g],g=x.g,p=x.p;if(o.fp){var tp=sumA(o.fp);return'<div class="ol"><img class="th" loading="lazy" decoding="async" alt="Foto do modelo '+esc(p.m)+'" title="Ver grades deste modelo" data-g="'+o.g+'" src="'+p.img+'"><div><b>'+esc(p.l)+'</b> – '+esc(p.o)+' <em class="fpb">Fast Pink</em><small>Modelo '+esc(p.m)+', '+esc(fpTxt(g,o.fp))+'</small><small class="v">'+plural(tp,isUN(g.sz)?"unidade":"par",isUN(g.sz)?"unidades":"pares")+(prc(g,o.z)?" – "+fmt(prc(g,o.z)*tp):" – preço a confirmar")+'</small></div><span class="qc"><button data-k="'+k+'" data-rm="1" aria-label="Remover">✕</button></span></div>'}return'<div class="ol"><img class="th" loading="lazy" decoding="async" alt="Foto do modelo '+esc(p.m)+'" title="Ver grades deste modelo" data-g="'+o.g+'" src="'+p.img+'"><div><b>'+esc(p.l)+'</b> – '+esc(p.o)+'<small>Modelo '+esc(p.m)+(isUN(g.sz)&&g.par===1?", unidade":', grade '+esc(gradeTxt(g.sz))+', '+plural(g.par,isUN(g.sz)?"peça":"par",isUN(g.sz)?"peças":"pares")+' por caixa')+'</small><small class="v">'+(prc(g,o.z)?fmt(prc(g,o.z)*g.par*o.n):"preço a confirmar")+'</small></div><span class="qc"><button data-k="'+k+'" data-d="-1" aria-label="Menos">−</button><input class="qn" type="number" min="1"'+(g.cx?' max="'+g.cx+'"':'')+' inputmode="numeric" data-k="'+k+'" value="'+o.n+'"><button data-k="'+k+'" data-d="1" aria-label="Mais">+</button></span></div>'};
 var h=PT.map(function(pt){var ks=[];order.forEach(function(o,k){if(o.z===pt[0])ks.push(k)});if(!ks.length)return"";var sub=0,sp=false;ks.forEach(function(k){var o=order[k],g=GI[o.g].g,p=prc(g,o.z);if(!p){sp=true;return}sub+=o.fp?sumA(o.fp)*p:o.n*g.par*p});return'<div class="zh"><span>Tabela de preço médio: <b>'+pt[1]+'</b></span><em>'+fmt(sub)+(sp?" + a confirmar":"")+'</em></div>'+ks.map(function(k){return row(order[k],k)}).join("")}).join("");
 var t=tot();$("ol").innerHTML=order.length?h+'<div class="tot">Tabela de preço médio: '+esc(przTxt())+'<br>'+cartLbl(t)+", "+plural(t.par,"par","pares")+", "+fmt(t.val)+(t.sp?" (mais itens com preço a confirmar)":"")+'</div>':'<div class="empty">Nada por aqui ainda. Abra um modelo e toque em adicionar caixa, unidade ou realizar sua grade personalizada (Fast Pink).</div>';$("go").hidden=!order.length;$("lc").hidden=!order.length;document.querySelector(".cf").hidden=!order.length}
 function setN(k,n){var o=order[k],g=GI[o.g].g;if(!(n>0))order.splice(k,1);else o.n=g.cx?Math.min(n,g.cx-(qtyAll(o.g)-o.n)):n;upd();badges();ol();toast("Carrinho atualizado")}
 $("pb").onclick=function(){ol();$("od").showModal()};
 var lcT;$("lc").onclick=function(){var b=this;if(b.dataset.s==="1"){clearTimeout(lcT);b.dataset.s="";b.textContent="Limpar carrinho";clearOrder();ol();return}b.dataset.s="1";b.textContent="Toque de novo para limpar";lcT=setTimeout(function(){b.dataset.s="";b.textContent="Limpar carrinho"},3000)};
-$("ol").addEventListener("click",function(e){var b=e.target.closest("button[data-k]");if(!b)return;var k=+b.dataset.k;if(b.dataset.rm){order.splice(k,1);upd();badges();ol();return}setN(k,order[k].n+ +b.dataset.d)});
+$("ol").addEventListener("click",function(e){var im=e.target.closest("img.th[data-g]");if(im){abrirGrade(im.dataset.g);return}var b=e.target.closest("button[data-k]");if(!b)return;var k=+b.dataset.k;if(b.dataset.rm){order.splice(k,1);upd();badges();ol();return}setN(k,order[k].n+ +b.dataset.d)});
 $("ol").addEventListener("change",function(e){var b=e.target.closest("input[data-k]");if(!b)return;setN(+b.dataset.k,parseInt(b.value,10))});
 /* ---------- dados da loja (salvos no aparelho) ---------- */
 function fone(v){var d=v.replace(/\D/g,"");if((d.length===12||d.length===13)&&d.slice(0,2)==="55")d=d.slice(2);return(d.length===10||d.length===11)&&+d.slice(0,2)>=11?d:""}
@@ -1055,6 +1064,9 @@ $("ab").showModal()}
 var IC={c:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3.5h3l2.3 11.2h10.4l2-8.2H6.2"/></svg>'};
 function cartTxt(){return order.length?"":"vazio"}
 function openP(id){if(!P[id])return;cur=id;sheet(false);$("sh").showModal();$("sh").scrollTop=0}
+/* carrinho: toque na foto abre o modelo, já na área das grades / adicionar caixa */
+function abrirGrade(gid){var x=GI[gid];if(!x)return;openP(x.p.id);setTimeout(function(){var s=$("sh"),b=s.querySelector('[data-g="'+gid+'"]'),c=b?b.closest(".gd"):null;if(!c)c=s.querySelector(".gd");if(!c)return;try{c.scrollIntoView({block:"center",behavior:"smooth"})}catch(e){c.scrollIntoView()}c.classList.add("gdhl");setTimeout(function(){c.classList.remove("gdhl")},1800)},90)}
+$("sh").addEventListener("close",function(){if($("od").open)ol()});
 function calcNovos(){var keys=P.filter(vis).map(pkey),now=Date.now(),W=7*864e5,st=LS.get("pp_seen",null),old=LS.get("pp_cat",null);
 if(!st){st={};var ok={};if(old&&old.keys){old.keys.forEach(function(k){st[k]=0;ok[k]=1})}keys.forEach(function(k){if(!ok[k])st[k]=old&&old.keys?now:0});LS.del("pp_cat");LS.set("pp_seen",st);return old&&old.keys?keys.filter(function(k){return st[k]>0}).length:null}
 var ch=false,n=0;keys.forEach(function(k){if(st[k]===undefined){st[k]=now;ch=true}if(st[k]>0&&now-st[k]<W)n++});
@@ -1179,6 +1191,19 @@ LS.del("pp_th");drawHc();drawCats();drawBanner();iniciar();
   }
   $("bl").addEventListener("pointerup", soltarDrag);
   $("bl").addEventListener("pointercancel", soltarDrag);
+  /* pergunta antes de apagar */
+  var PEDE = null;
+  function pedirApagar(btn) {
+    var w = btn.closest(".bdw"); if (!w) return;
+    var o = LIST.filter(function (x) { return x.id === w.dataset.id; })[0] || {};
+    PEDE = { btn: btn, w: w };
+    $("bcn").textContent = o.nome ? "o pedido de " + o.nome : "este pedido";
+    $("bc").showModal();
+  }
+  $("bcs").addEventListener("click", function () { var p = PEDE; PEDE = null; $("bc").close(); if (p) apagar(p.btn); });
+  $("bcc").addEventListener("click", function () { $("bc").close(); });
+  $("bc").addEventListener("close", function () { if (PEDE) { fechar(PEDE.w.querySelector(".bdl")); PEDE = null; } });
+  $("bc").addEventListener("click", function (e) { if (e.target === this) this.close(); });
   function apagar(btn) {
     var w = btn.closest(".bdw"); if (!w || btn.disabled) return;
     var id = w.dataset.id, rot = btn.innerHTML;
@@ -1196,7 +1221,7 @@ LS.del("pp_th");drawHc();drawCats();drawBanner();iniciar();
   }
   $("bl").addEventListener("click", function (e) {
     var k = e.target.closest && e.target.closest(".bdk");
-    if (k) { apagar(k); return; }
+    if (k) { pedirApagar(k); return; }
     var it = e.target.closest && e.target.closest(".bdl");
     if (!it || SUPRIME) return;
     if (OPEN === it) { fechar(it); return; }
